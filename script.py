@@ -338,6 +338,9 @@ for y in range(ROWS):
         else:
             cropped.save(BLOCKS_PATH + name + ".png")
 
+            if name == "conduit":
+                addTexture(cropped, "conduit")
+
             if name == "oak_planks":
                 addTexture(cropped, "bed", "bottom")
 
@@ -409,6 +412,28 @@ def bell():
         texture.paste(side_bottom, (8 * i, 6 + 7 + 8))
 
     texture.save(path + "bell_body.png")
+
+def conduit():
+    conduit = entities["conduit"]
+
+    path = ENTITIES_PATH + "conduit/"
+    makedirs(path)
+
+    conduit.save(path + "break_particle.png")
+
+    texture = Image.new("RGBA", (TEXTURE_SIZE * 2, TEXTURE_SIZE), (0, 0, 0, 0))
+    top_left = conduit.crop((2, 2, 8, 8))
+    top_right = conduit.crop((8, 2, 14, 8))
+    bottom_left = conduit.crop((2, 8, 8, 14))
+    bottom_right = conduit.crop((8, 8, 14, 14))
+
+    texture.paste(top_left, (6, 0))
+    texture.paste(top_right, (6 * 2, 0))
+    texture.paste(bottom_left, (6, 6))
+    texture.paste(bottom_right, (6 * 2, 6))
+    texture.paste(bottom_left, (0, 6))
+    texture.paste(bottom_right, (6 * 3, 6))
+    texture.save(path + "base.png")
 
 def decorated_pot():
     decorated_pot = entities["decorated_pot"]
@@ -484,5 +509,6 @@ def shulker():
 
 bed()
 bell()
+conduit()
 decorated_pot()
 shulker()
