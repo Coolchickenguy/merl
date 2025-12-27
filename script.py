@@ -33,7 +33,7 @@ names: list[str] = [
     "tnt_bottom", "cobweb", "poppy", "dandelion", "nether_portal",
     "oak_sapling", "cobblestone", "bedrock", "sand", "gravel",
     "oak_log", "oak_log_top", "iron_block", "gold_block", "diamond_block",
-    None, None, None, "red_mushroom", "brown_mushroom",
+    "chest.normal.top", "chest.normal.side", "chest.normal.front", "red_mushroom", "brown_mushroom",
     "jungle_sapling", "fire_0", "gold_ore", "iron_ore", "coal_ore",
     "bookshelf", "mossy_cobblestone", "obsidian", "grass_block_side_overlay", "short_grass",
     None, None, None, "crafting_table_top", "furnace_front",
@@ -76,8 +76,8 @@ names: list[str] = [
     "spruce_planks", "jungle_planks", "carrots_stage0", "carrots_stage1", "carrots_stage2",
     "carrots_stage3", "potatoes_stage0", "potatoes_stage1", "potatoes_stage2", "potatoes_stage3",
     "sandstone_bottom", "cyan_wool", "orange_wool", "redstone_lamp", "redstone_lamp_on",
-    "chiseled_stone_bricks", "birch_planks", "anvil", "chipped_anvil_top", None,
-    None, None, None, "jungle_leaves", "red_sandstone",
+    "chiseled_stone_bricks", "birch_planks", "anvil", "chipped_anvil_top", "chest.ender.lock",
+    "chest.ender.top", "chest.ender.side", "chest.ender.front", "jungle_leaves", "red_sandstone",
     "water_still",
 
     "nether_bricks", "light_gray_wool", "nether_wart_stage0", "nether_wart_stage1", "nether_wart_stage2",
@@ -125,7 +125,7 @@ names: list[str] = [
     "frosted_ice_1", "frosted_ice_2", "frosted_ice_3", "structure_block_corner", "structure_block_data",
     "structure_block_load", "structure_block_save", None, "water_overlay", "magma",
     "nether_wart_block", "red_nether_bricks", "bone_block_side", "bone_block_top", None,
-    None, None, "water_flow", "lava_still", None,
+    None, "chest.normal.lock", "water_flow", "lava_still", None,
     None, None, None, None, None,
     "shulker.white.top", "shulker.orange.top", "shulker.magenta.top", "shulker.light_blue.top", "shulker.yellow.top",
     "shulker.lime.top", "shulker.pink.top", "shulker.gray.top", "shulker.light_gray.top", "shulker.cyan.top",
@@ -413,6 +413,47 @@ def bell():
 
     texture.save(path + "bell_body.png")
 
+def chest():
+    path = ENTITIES_PATH + "chest/"
+    makedirs(path)
+
+    for variant, chest in entities["chest"].items():
+        texture = Image.new("RGBA", (TEXTURE_SIZE * 4, TEXTURE_SIZE * 4), (0, 0, 0, 0))
+        lock = chest["lock"].crop((1, 0, 6, 5)).transpose(Image.ROTATE_180)
+        lock_flipped = lock.transpose(Image.FLIP_LEFT_RIGHT)
+        top = chest["top"].crop((1, 1, TEXTURE_SIZE - 1, TEXTURE_SIZE - 1))
+        front_top = chest["front"].crop((1, 2, TEXTURE_SIZE - 1, 7)).transpose(Image.ROTATE_180)
+        front_bottom = chest["front"].crop((1, 6, TEXTURE_SIZE - 1, TEXTURE_SIZE))
+        side_top = chest["side"].crop((1, 2, TEXTURE_SIZE - 1, 7)).transpose(Image.ROTATE_180)
+        side_bottom = chest["side"].crop((1, 6, TEXTURE_SIZE - 1, TEXTURE_SIZE))
+
+        texture.paste(lock_flipped, (0, 0))
+        texture.paste(lock, (1, 0))
+        texture.paste(top, (14 * 2, 0))
+
+        if variant == "normal":
+            inside_top = top.copy()
+            overlay = Image.new("RGBA", (TEXTURE_SIZE, TEXTURE_SIZE), (0, 0, 0, 0))
+            draw = ImageDraw.Draw(overlay)
+            draw.rectangle((2, 2, 14 - 1 - 2, 14 - 1 - 2), (0, 0, 0, 152))
+            inside_top.alpha_composite(overlay)
+
+            inside_bottom = top.copy()
+            draw = ImageDraw.Draw(inside_bottom)
+            draw.rectangle((2, 2, 14 - 1 - 2, 14 - 1 - 2), (0, 0, 0))
+
+            texture.paste(top, (14, 14 + 5))
+            texture.paste(inside_top, (14, 0))
+            texture.paste(inside_bottom, (14 * 2, 14 + 5))
+
+        for i in range(3):
+            texture.paste(side_top, (14 * i, 14))
+            texture.paste(side_bottom, (14 * i, 14 * 2 + 5))
+
+        texture.paste(front_top, (14 * 3, 14))
+        texture.paste(front_bottom, (14 * 3, 14 * 2 + 5))
+        texture.save(path + variant + ".png")
+
 def conduit():
     conduit = entities["conduit"]
 
@@ -509,6 +550,7 @@ def shulker():
 
 bed()
 bell()
+chest()
 conduit()
 decorated_pot()
 shulker()
