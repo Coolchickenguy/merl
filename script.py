@@ -127,10 +127,10 @@ names: list[str] = [
     "nether_wart_block", "red_nether_bricks", "bone_block_side", "bone_block_top", None,
     None, None, "water_flow", "lava_still", None,
     None, None, None, None, None,
-    "white_shulker_box", "orange_shulker_box", "magenta_shulker_box", "light_blue_shulker_box", "yellow_shulker_box",
-    "lime_shulker_box", "pink_shulker_box", "gray_shulker_box", "light_gray_shulker_box", "cyan_shulker_box",
-    "purple_shulker_box", "blue_shulker_box", "brown_shulker_box", "green_shulker_box", "red_shulker_box",
-    "black_shulker_box",
+    "shulker.white.top", "shulker.orange.top", "shulker.magenta.top", "shulker.light_blue.top", "shulker.yellow.top",
+    "shulker.lime.top", "shulker.pink.top", "shulker.gray.top", "shulker.light_gray.top", "shulker.cyan.top",
+    "shulker.purple.top", "shulker.blue.top", "shulker.brown.top", "shulker.green.top", "shulker.red.top",
+    "shulker.black.top",
 
     "white_glazed_terracotta", "orange_glazed_terracotta", "magenta_glazed_terracotta", "light_blue_glazed_terracotta", "yellow_glazed_terracotta",
     "lime_glazed_terracotta", "pink_glazed_terracotta", "gray_glazed_terracotta", "light_gray_glazed_terracotta", "cyan_glazed_terracotta",
@@ -142,14 +142,14 @@ names: list[str] = [
     "light_blue_concrete_powder", "yellow_concrete_powder", "lime_concrete_powder", "pink_concrete_powder",
     "gray_concrete_powder", "light_gray_concrete_powder", "cyan_concrete_powder", "purple_concrete_powder",
     "blue_concrete_powder", "brown_concrete_powder", "green_concrete_powder", "red_concrete_powder", "black_concrete_powder",
-    None, None, None, None, None,
-    None, None, None,
+    "shulker.white.side", "shulker.orange.side", "shulker.magenta.side", "shulker.light_blue.side", "shulker.yellow.side",
+    "shulker.lime.side", "shulker.pink.side", "shulker.gray.side",
 
-    None, None, None, None, None,
-    None, None, None, None, None,
-    None, None, None, None, None,
-    None, None, None, None, None,
-    None, None, None, None, "observer_back",
+    "shulker.light_gray.side", "shulker.cyan.side", "shulker.purple.side", "shulker.blue.side", "shulker.brown.side",
+    "shulker.green.side", "shulker.red.side", "shulker.black.side", "shulker.white.bottom", "shulker.orange.bottom",
+    "shulker.magenta.bottom", "shulker.light_blue.bottom", "shulker.yellow.bottom", "shulker.lime.bottom", "shulker.pink.bottom",
+    "shulker.gray.bottom", "shulker.light_gray.bottom", "shulker.cyan.bottom", "shulker.purple.bottom", "shulker.blue.bottom",
+    "shulker.brown.bottom", "shulker.green.bottom", "shulker.red.bottom", "shulker.black.bottom", "observer_back",
     "observer_back_on", "observer_front", "observer_side", "observer_top", None,
     None, "dried_kelp_top", "dried_kelp_side", "dried_kelp_bottom", "kelp",
     "kelp_plant", "sea_pickle", "blue_ice", "tall_seagrass_bottom", "tall_seagrass_top",
@@ -326,6 +326,9 @@ for y in range(ROWS):
                 current = current[part]
 
             current[parts[-1]] = cropped
+
+            if parts[0] == "shulker" and parts[2] == "top":
+                cropped.save(BLOCKS_PATH + parts[1] + "_shulker_box.png")
         else:
             cropped.save(BLOCKS_PATH + name + ".png")
 
@@ -364,4 +367,49 @@ def decorated_pot():
     texture.paste(bottom, (14, 13))
     texture.save(path + "decorated_pot_base.png")
 
+def shulker():
+    path = ENTITIES_PATH + "shulker/"
+    makedirs(path)
+
+    for color, shulker in entities["shulker"].items():
+        texture = Image.new("RGBA", (TEXTURE_SIZE * 4, TEXTURE_SIZE * 4), (0, 0, 0, 0))
+        top = shulker["top"]
+        bottom = shulker["bottom"]
+        side_top = shulker["side"].crop((0, 0, TEXTURE_SIZE, 8))
+        side_left = shulker["side"].crop((0, 8, 4, 12))
+        side_right = shulker["side"].crop((TEXTURE_SIZE - 4, 8, TEXTURE_SIZE, 12))
+        side_middle = shulker["side"].crop((4, 8, TEXTURE_SIZE - 4, 12))
+        side_bottom = shulker["side"].crop((0, 12, TEXTURE_SIZE, TEXTURE_SIZE))
+
+        texture.paste(top, (TEXTURE_SIZE, 0))
+        texture.paste(bottom, (TEXTURE_SIZE * 2, TEXTURE_SIZE + 12))
+
+        for i in range(4):
+            texture.paste(side_top, (TEXTURE_SIZE * i, TEXTURE_SIZE))
+            texture.paste(side_left, (TEXTURE_SIZE * i, TEXTURE_SIZE + 8))
+            texture.paste(side_right, (TEXTURE_SIZE * i + TEXTURE_SIZE - 4, TEXTURE_SIZE + 8))
+
+        for i in range(4):
+            texture.paste(side_middle, (TEXTURE_SIZE * i + 4, TEXTURE_SIZE + 20 + 8))
+            texture.paste(side_bottom, (TEXTURE_SIZE * i, TEXTURE_SIZE + 20 + 12))
+
+        pixel = shulker["top"].getpixel((0, 0))
+        draw = ImageDraw.Draw(texture)
+        draw.line((TEXTURE_SIZE * 2, 0, TEXTURE_SIZE * 2 + 3, 0), pixel)
+        draw.line((TEXTURE_SIZE * 2, 0, TEXTURE_SIZE * 2, 3), pixel)
+        draw.line((TEXTURE_SIZE * 3 - 1, 0, TEXTURE_SIZE * 3 - 1 - 3, 0), pixel)
+        draw.line((TEXTURE_SIZE * 3 - 1, 0, TEXTURE_SIZE * 3 - 1, 3), pixel)
+        draw.line((TEXTURE_SIZE * 2, TEXTURE_SIZE - 1, TEXTURE_SIZE * 2 + 3, TEXTURE_SIZE - 1), pixel)
+        draw.line((TEXTURE_SIZE * 2, TEXTURE_SIZE - 1, TEXTURE_SIZE * 2, TEXTURE_SIZE - 1 - 3), pixel)
+        draw.line((TEXTURE_SIZE * 3 - 1, TEXTURE_SIZE - 1, TEXTURE_SIZE * 3 - 1 - 3, TEXTURE_SIZE - 1), pixel)
+        draw.line((TEXTURE_SIZE * 3 - 1, TEXTURE_SIZE - 1, TEXTURE_SIZE * 3 - 1, TEXTURE_SIZE - 1 - 3), pixel)
+
+        draw.line((TEXTURE_SIZE + 4, TEXTURE_SIZE + 12, TEXTURE_SIZE * 2 - 1 - 4, TEXTURE_SIZE + 12), pixel)
+        draw.line((TEXTURE_SIZE + 4, TEXTURE_SIZE * 2 - 1 + 12, TEXTURE_SIZE * 2 - 1 - 4, TEXTURE_SIZE * 2 - 1 + 12), pixel)
+        draw.line((TEXTURE_SIZE, TEXTURE_SIZE + 12 + 4, TEXTURE_SIZE, TEXTURE_SIZE * 2 - 1 + 12 - 4), pixel)
+        draw.line((TEXTURE_SIZE * 2 - 1, TEXTURE_SIZE + 12 + 4, TEXTURE_SIZE * 2 - 1, TEXTURE_SIZE * 2 - 1 + 12 - 4), pixel)
+
+        texture.save(path + "shulker_" + color + ".png")
+
 decorated_pot()
+shulker()
