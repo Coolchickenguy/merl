@@ -5,6 +5,7 @@ ATLAS_PATH = "WorkshopTextureAtlas.png"
 ASSETS_PATH = "assets/"
 BLOCKS_PATH = ASSETS_PATH + "minecraft/textures/block/"
 ENTITIES_PATH = ASSETS_PATH + "minecraft/textures/entity/"
+ITEMS_PATH = ASSETS_PATH + "minecraft/textures/item/"
 
 if os.path.exists(ATLAS_PATH):
     atlas = Image.open(ATLAS_PATH)
@@ -21,6 +22,7 @@ def makedirs(path):
 
 shutil.rmtree(ASSETS_PATH)
 makedirs(BLOCKS_PATH)
+makedirs(ITEMS_PATH)
 
 TILE_SIZE = 18
 TEXTURE_SIZE = 16
@@ -123,7 +125,7 @@ names: list[str] = [
     "command_block_conditional", "repeating_command_block_front", "repeating_command_block_back", "repeating_command_block_side", "repeating_command_block_conditional",
     "chain_command_block_front", "chain_command_block_back", "chain_command_block_side", "chain_command_block_conditional", "frosted_ice_0",
     "frosted_ice_1", "frosted_ice_2", "frosted_ice_3", "structure_block_corner", "structure_block_data",
-    "structure_block_load", "structure_block_save", None, "water_overlay", "magma",
+    "structure_block_load", "structure_block_save", "barrier", "water_overlay", "magma",
     "nether_wart_block", "red_nether_bricks", "bone_block_side", "bone_block_top", None,
     None, "chest.normal.lock", "water_flow", "lava_still", None,
     None, None, None, None, None,
@@ -326,6 +328,8 @@ for y in range(ROWS):
 
         if name == None:
             notUsedAtlas.paste(cropped, (left, top))
+        elif name == "barrier":
+            cropped.save(ITEMS_PATH + name + ".png")
         elif "." in name:
             parts = name.split(".")
             addTexture(cropped, *parts)
