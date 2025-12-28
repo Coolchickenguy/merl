@@ -72,7 +72,7 @@ names: list[str] = [
     "cocoa_stage2", "cocoa_stage1", "cocoa_stage0", "emerald_ore", "tripwire_hook",
     "tripwire", "end_portal_frame_eye", "end_stone", "sandstone_top", "blue_wool",
     "light_blue_wool", "powered_rail_on", None, "acacia_log", "enchanting_table_side",
-    "enchanting_table_bottom", None, None, "flower_pot", "birch_log_top",
+    "enchanting_table_bottom", "end_portal", None, "flower_pot", "birch_log_top",
     "spruce_log_top", "jungle_log_top", "melon_stem", "attached_melon_stem", "sandstone",
     "purple_wool", "magenta_wool", "detector_rail", "birch_leaves", "chiseled_red_sandstone",
     "spruce_planks", "jungle_planks", "carrots_stage0", "carrots_stage1", "carrots_stage2",
@@ -345,6 +345,9 @@ for y in range(ROWS):
             if name == "conduit":
                 addTexture(cropped, "conduit")
 
+            if name == "end_portal":
+                addTexture(cropped, "end_portal")
+
             if name == "oak_planks":
                 addTexture(cropped, "bed", "bottom")
 
@@ -508,6 +511,20 @@ def decorated_pot():
     texture.paste(bottom, (14, 13))
     texture.save(path + "decorated_pot_base.png")
 
+def end_portal():
+    end_portal = entities["end_portal"]
+
+    path = ENTITIES_PATH
+    makedirs(path)
+
+    texture = Image.new("RGBA", (TEXTURE_SIZE * 16, TEXTURE_SIZE * 16), (0, 0, 0, 0))
+
+    for y in range(16):
+        for x in range(16):
+            texture.paste(end_portal, (TEXTURE_SIZE * x, TEXTURE_SIZE * y))
+
+    texture.save(path + "end_portal.png")
+
 def shulker():
     path = ENTITIES_PATH + "shulker/"
     makedirs(path)
@@ -557,4 +574,5 @@ bell()
 chest()
 conduit()
 decorated_pot()
+end_portal()
 shulker()
