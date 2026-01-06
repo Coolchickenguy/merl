@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw
-import os, sys, shutil
+import os, sys, shutil, zipfile
 
 ATLAS_PATHS = ["WorkshopTextureAtlas.png", "workshopTextureAtlas.png"]
 ATLAS_PATH = next(
@@ -583,3 +583,23 @@ conduit()
 decorated_pot()
 end_portal()
 shulker()
+
+ZIP_ITEMS=["assets", "pack.mcmeta"]
+
+def zip_files(zip_name, file_paths):
+    # Create a Zip file and open it in write mode
+    with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for item in file_paths:
+            if os.path.isdir(item):
+                # Walk contents if directory
+                for foldername, subfolders, filenames in os.walk(item):
+                    for filename in filenames:
+                        filepath = os.path.join(foldername, filename)
+                        zipf.write(filepath)
+            elif os.path.isfile(item):
+                # Add directly if file
+                zipf.write(item, item)
+            else:
+                print(f"Warning: {item} is not a valid file or directory")
+
+zip_files("merl_pack.zip", ZIP_ITEMS)

@@ -1,8 +1,5 @@
-import os
-import requests
-import base64
+import os, requests, base64, mimetypes
 from pygltflib import GLTF2
-import mimetypes
 
 GLB_URL = "https://xsvabundleprod-c4b3d4etadb8dxha.b02.azurefd.net/assets/models/Merl_Workshop_01.glb"
 ATLAS_FILE_NAME = "workshopTextureAtlas"
